@@ -40,7 +40,7 @@ body {
   font-size: 28px;
   font-weight: 700;
   background: linear-gradient(135deg, #ff6b9d 0%, #c94b7d 100%);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 8px;
 }
@@ -495,7 +495,7 @@ canvas#artsy-canvas {
   background: linear-gradient(90deg, #ffe8f0, #ff6b9d);
   outline: none;
   cursor: pointer;
-  -webkit-appearance: none;
+  appearance: none;
 }
 
 .brush-slider-large::-webkit-slider-thumb {
