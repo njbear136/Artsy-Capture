@@ -16,5 +16,7 @@ Artsy Capture is a creative webpage where users can upload a photo and customize
 - Use the Draw option to draw doodles on your photos with any color!
 - Use the Save button to save your edited image.
 - Use the clear option to erase everything all at once.
+  ** Your uploaded stickers, frames or doodles will be in the uploaded files dropdown menu until you refresh the page**
+  // refreshing the pages causes everything to clear up //
 
-#Webpage link: 
+#Webpage link: https://njbear136.github.io/Artsy-Capture/
