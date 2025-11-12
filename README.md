@@ -7,10 +7,14 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## React Compiler
+## What the webpage is about:
+Artsy Capture is a creative webpage where users can upload a photo and customize it by adding frames, borders, effects, or doodles, and then save it:) Have fun editing your favorite photos with fun stickers and frames!
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+#How to use it:
+- Use the Add Photo option to upload a photo to the webpage.
+- Use the Add your art option to add your stickers, frames, or other fun doodles saved in your library(make sure they have transparent background!)
+- Use the Draw option to draw doodles on your photos with any color!
+- Use the Save button to save your edited image.
+- Use the clear option to erase everything all at once.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+#Webpage link: 
