@@ -4,6 +4,7 @@ import CanvasEditor from "./CanvasEditor.jsx";
 export default function App() {
   const [mainPhoto, setMainPhoto] = useState(null);
   const [assetFiles, setAssetFiles] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
 
   return (
     <div className="app-root">
@@ -11,33 +12,15 @@ export default function App() {
         <header className="app-header">
           <h1>Artsy Capture</h1>
           <p className="tag">
-            Upload or snap a photo — add frames, doodles & stickers
+            Upload a photo — add frames, doodles & stickers and edit happily!
           </p>
         </header>
 
         <div className="controls-block">
           <div>
-            <h3>📷 Get a photo</h3>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                if (e.target.files.length) {
-                  setMainPhoto(e.target.files[0]);
-                }
-              }}
-            />
-            <small className="hint">
-              Or use your camera on mobile (use the file picker)
-            </small>
-          </div>
-
-          <hr />
-
-          <div>
             <h3>🎨 Add your art</h3>
             <p className="hint">
-              Add frames/doodles/stickers from files below or use presets
+              Add frames/doodles/stickers from files below
             </p>
             <input
               type="file"
@@ -45,7 +28,9 @@ export default function App() {
               multiple
               onChange={(e) => {
                 if (e.target.files.length) {
-                  setAssetFiles(Array.from(e.target.files));
+                  const files = Array.from(e.target.files);
+                  setAssetFiles(files);
+                  setUploadedFiles(prev => [...prev, ...files]);
                 }
               }}
             />
@@ -62,6 +47,7 @@ export default function App() {
             </p>
             <ul className="tip-list">
               <li>Drag, resize, and rotate stickers on the canvas</li>
+              <li>Use the Draw tool to draw on your photo</li>
               <li>Use the Save button to download a merged PNG</li>
               <li>Click a sticker and press Delete to remove it</li>
               <li>Add multiple stickers and layer them creatively</li>
@@ -74,6 +60,7 @@ export default function App() {
         <CanvasEditor
           mainPhoto={mainPhoto}
           assetFiles={assetFiles}
+          uploadedFiles={uploadedFiles}
           setMainPhoto={setMainPhoto}
           setAssetFiles={setAssetFiles}
         />

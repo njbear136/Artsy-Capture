@@ -4,6 +4,7 @@ import Toolbar from "./Toolbar.jsx";
 export default function CanvasEditor({
   mainPhoto,
   assetFiles,
+  uploadedFiles,
   setMainPhoto,
   setAssetFiles,
 }) {
@@ -11,8 +12,9 @@ export default function CanvasEditor({
   const fabricRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [canvasReady, setCanvasReady] = useState(false);
+  const [isDrawingMode, setIsDrawingMode] = useState(false);
 
-  // ==================== CANVAS INITIALIZATION ====================
+  // CANVAS INITIALIZATION //
   useEffect(() => {
     if (typeof fabric === "undefined") {
       console.error("Fabric.js is not loaded. Check your script tag.");
@@ -22,14 +24,12 @@ export default function CanvasEditor({
     const container = document.getElementById("canvas-wrap");
     if (!container || !canvasRef.current) return;
 
-    // Initialize canvas after a short delay to ensure DOM is ready
     const timer = setTimeout(() => {
       try {
         const containerRect = container.getBoundingClientRect();
         let initialWidth = containerRect.width - 80;
         let initialHeight = containerRect.height - 200;
         
-        // Ensure minimum dimensions
         initialWidth = Math.max(Math.min(initialWidth, 800), 400);
         initialHeight = Math.max(Math.min(initialHeight, 600), 300);
 
@@ -42,11 +42,15 @@ export default function CanvasEditor({
           height: initialHeight,
         });
 
+        // Set up drawing brush
+        canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+        canvas.freeDrawingBrush.color = '#ff6b9d';
+        canvas.freeDrawingBrush.width = 5;
+
         fabricRef.current = canvas;
         setCanvasReady(true);
         console.log("Canvas initialized successfully!");
 
-        // Handle Delete/Backspace key
         const handleKeyPress = (e) => {
           if (!fabricRef.current) return;
           const activeObject = fabricRef.current.getActiveObject();
@@ -58,7 +62,6 @@ export default function CanvasEditor({
 
         window.addEventListener("keydown", handleKeyPress);
 
-        // Store cleanup function
         return () => {
           window.removeEventListener("keydown", handleKeyPress);
           if (fabricRef.current) {
@@ -75,13 +78,12 @@ export default function CanvasEditor({
       }
     }, 150);
 
-    // Cleanup timer on unmount
     return () => {
       clearTimeout(timer);
     };
   }, []);
 
-  // ==================== LOAD MAIN PHOTO ====================
+  // LOAD MAIN PHOTO//
   useEffect(() => {
     if (mainPhoto && canvasReady && fabricRef.current) {
       console.log("Loading main photo...");
@@ -89,7 +91,7 @@ export default function CanvasEditor({
     }
   }, [mainPhoto, canvasReady]);
 
-  // ==================== LOAD ASSET FILES ====================
+  // LOAD ASSET FILES //
   useEffect(() => {
     if (assetFiles && assetFiles.length > 0 && canvasReady && fabricRef.current) {
       console.log("Loading asset files...");
@@ -98,7 +100,7 @@ export default function CanvasEditor({
     }
   }, [assetFiles, canvasReady, setAssetFiles]);
 
-  // ==================== HELPER FUNCTIONS ====================
+  // HELPER FUNCTIONS//
 
   function loadBackgroundImage(file) {
     const canvas = fabricRef.current;
@@ -190,7 +192,6 @@ export default function CanvasEditor({
             const canvas = fabricRef.current;
             const scale = Math.min(canvas.getWidth() / img.width, canvas.getHeight() / img.height) * 0.4;
 
-            // CRITICAL FIX: Set properties that allow interaction
             img.set({
               left: canvas.getWidth() / 2,
               top: canvas.getHeight() / 2,
@@ -198,7 +199,6 @@ export default function CanvasEditor({
               originY: "center",
               scaleX: scale,
               scaleY: scale,
-              // Enable all interactions
               selectable: true,
               evented: true,
               hasControls: true,
@@ -208,7 +208,6 @@ export default function CanvasEditor({
               lockRotation: false,
               lockScalingX: false,
               lockScalingY: false,
-              // Style the controls
               cornerStyle: "circle",
               cornerSize: 12,
               transparentCorners: false,
@@ -233,91 +232,77 @@ export default function CanvasEditor({
     reader.readAsDataURL(file);
   }
 
-  function addPresetFrame(frameType = "polaroid") {
+  // Enable drawing mode
+  function enableDrawing() {
     const canvas = fabricRef.current;
     if (!canvas) return;
-
-    try {
-      if (frameType === "polaroid") {
-        const rect = new fabric.Rect({
-          left: canvas.getWidth() / 2,
-          top: canvas.getHeight() / 2,
-          originX: "center",
-          originY: "center",
-          width: canvas.getWidth() * 0.9,
-          height: canvas.getHeight() * 0.85,
-          fill: "rgba(255,255,255,0.95)",
-          stroke: "#fff",
-          strokeWidth: 2,
-          selectable: false,
-          shadow: new fabric.Shadow({
-            color: "rgba(0,0,0,0.15)",
-            blur: 15,
-            offsetX: 0,
-            offsetY: 5,
-          }),
-        });
-
-        const bottom = new fabric.Rect({
-          left: rect.left,
-          top: rect.top + rect.height / 2 - 40,
-          originX: "center",
-          originY: "center",
-          width: rect.width * 0.92,
-          height: 60,
-          fill: "rgba(250,250,250,1)",
-          selectable: false,
-        });
-
-        const group = new fabric.Group([rect, bottom], {
-          left: canvas.getWidth() / 2,
-          top: canvas.getHeight() / 2,
-          originX: "center",
-          originY: "center",
-          selectable: false,
-          evented: false,
-        });
-
-        canvas.add(group);
-        canvas.sendToBack(group);
-        canvas.renderAll();
-      } else {
-        const frame = new fabric.Rect({
-          left: canvas.getWidth() / 2,
-          top: canvas.getHeight() / 2,
-          originX: "center",
-          originY: "center",
-          width: canvas.getWidth() * 0.95,
-          height: canvas.getHeight() * 0.95,
-          fill: "transparent",
-          stroke: "#ffafc1",
-          strokeWidth: 16,
-          selectable: false,
-          evented: false,
-        });
-
-        canvas.add(frame);
-        canvas.sendToBack(frame);
-        canvas.renderAll();
-      }
-    } catch (error) {
-      console.error("Error adding frame:", error);
-    }
+    
+    canvas.isDrawingMode = true;
+    setIsDrawingMode(true);
+    console.log("Drawing mode enabled");
   }
 
+  // Disable drawing mode
+  function disableDrawing() {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+    
+    canvas.isDrawingMode = false;
+    setIsDrawingMode(false);
+    console.log("Drawing mode disabled");
+  }
+
+  // Change brush color
+  function changeBrushColor(color) {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+    
+    canvas.freeDrawingBrush.color = color;
+    console.log("Brush color changed to:", color);
+  }
+
+  // Change brush width
+  function changeBrushWidth(width) {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+    
+    canvas.freeDrawingBrush.width = width;
+    console.log("Brush width changed to:", width);
+  }
+
+  // Save with transparent background
   function saveMergedImage() {
     const canvas = fabricRef.current;
     if (!canvas) return;
 
     try {
       canvas.discardActiveObject();
+      const bgImage = canvas.backgroundImage;
+      canvas.backgroundImage = null;
+      canvas.backgroundColor = 'transparent';
       canvas.renderAll();
 
-      const dataUrl = canvas.toDataURL({ format: "png", quality: 1.0 });
+    
+      const dataUrl = canvas.toDataURL({ 
+        format: "png", 
+        quality: 1.0,
+        backgroundColor: 'transparent'
+      });
+      
+    
+      if (bgImage) {
+        canvas.setBackgroundImage(bgImage, canvas.renderAll.bind(canvas));
+      } else {
+        canvas.backgroundColor = '#fff';
+        canvas.renderAll();
+      }
+
       const link = document.createElement("a");
       link.href = dataUrl;
       link.download = `artsy_capture_${Date.now()}.png`;
       link.click();
+      
+      console.log("Image saved with transparent background!");
     } catch (error) {
       console.error("Error saving image:", error);
       alert("Error saving image. Please try again.");
@@ -331,6 +316,8 @@ export default function CanvasEditor({
     try {
       canvas.clear();
       canvas.setBackgroundColor("#ffffff", canvas.renderAll.bind(canvas));
+      canvas.isDrawingMode = false;
+      setIsDrawingMode(false);
       setMainPhoto(null);
       setAssetFiles([]);
     } catch (error) {
@@ -338,7 +325,13 @@ export default function CanvasEditor({
     }
   }
 
-  // ==================== RENDER ====================
+  function handleSelectUploadedFile(file) {
+    if (canvasReady) {
+      setAssetFiles([file]);
+    }
+  }
+
+  // RENDER //
   return (
     <div id="canvas-wrap" className="canvas-area">
       <Toolbar
@@ -347,13 +340,18 @@ export default function CanvasEditor({
             setMainPhoto(file);
           }
         }}
-        onAddPreset={() => addPresetFrame("polaroid")}
-        onAddBorder={() => addPresetFrame("border")}
         onAddAsset={(file) => {
           if (canvasReady) {
-            setAssetFiles((prev) => [...prev, file]);
+            setAssetFiles([file]);
           }
         }}
+        uploadedFiles={uploadedFiles}
+        onSelectUploadedFile={handleSelectUploadedFile}
+        onEnableDrawing={enableDrawing}
+        onDisableDrawing={disableDrawing}
+        onChangeBrushColor={changeBrushColor}
+        onChangeBrushWidth={changeBrushWidth}
+        isDrawingMode={isDrawingMode}
         onSave={saveMergedImage}
         onReset={resetCanvas}
       />
