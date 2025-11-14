@@ -1,13 +1,4 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## What the webpage is about:
+# What the webpage is about:
 Artsy Capture is a creative webpage where users can upload a photo and customize it by adding frames, borders, effects, or doodles, and then save it:) Have fun editing your favorite photos with fun stickers and frames!
 
 #How to use it:
@@ -20,3 +11,6 @@ Artsy Capture is a creative webpage where users can upload a photo and customize
   // refreshing the pages causes everything to clear up //
 
 #Webpage link: https://njbear136.github.io/Artsy-Capture/
+
+Preview Screenshot: <img width="1365" height="592" alt="image" src="https://github.com/user-attachments/assets/46a4eef6-12c3-4375-9dde-64484a34738c" />
+
